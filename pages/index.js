@@ -1,26 +1,40 @@
 import Link from "next/link";
-import Container from "../components/Container";
-import { useAuth } from "../lib/auth";
+import ContainerLayout from "../components/ContainerLayout";
+import Landing from "../components/Landing";
+import { Flex, Text, Button } from "@chakra-ui/react";
 
 export default function Home() {
-  const auth = useAuth();
-
   return (
-    <Container auth={auth}>
-      <div className="flex flex-col">
+    <ContainerLayout>
+      {/* {auth?.user ? ( */}
+      <Flex flexDir="column" width="100%">
         <header>
-          <h3 className="text-3xl font-bold">My Polls</h3>
+          <Text fontSize="1.8em" fontWeight="bold">
+            My Polls
+          </Text>
         </header>
-        <div className="bg-gray-100 dark:bg-gray-600 px-3 py-3 flex flex-col items-center justify-center rounded-md h-80 my-6">
-          <p className="text-2xl">Create Realtime Polls for your needs</p>
-          <p className="mb-4">You do not have any polls</p>
+        <Flex
+          alignItems="center"
+          justifyContent="center"
+          flexDir="column"
+          padding={3}
+          borderRadius="0.5em"
+          height="40%"
+          marginTop="1em"
+          background="gray.100"
+        >
+          <Text fontSize="1.5em">Create Realtime Polls for your needs</Text>
+          <Text marginBottom="1em">You do not have any polls</Text>
           <Link href="/addPoll">
-            <button className="px-4 py-2 bg-gray-900 text-white rounded-md font-semibold">
+            <Button variant="solid" background="gray.900" color="white">
               Create a new Poll 📊
-            </button>
+            </Button>
           </Link>
-        </div>
-      </div>
-    </Container>
+        </Flex>
+      </Flex>
+      {/* ) : (
+        <Landing />
+      )} */}
+    </ContainerLayout>
   );
 }

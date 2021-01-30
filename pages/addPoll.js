@@ -1,57 +1,164 @@
 import Link from "next/link";
-import Container from "../components/Container";
+import { useState } from "react";
+import ContainerLayout from "../components/ContainerLayout";
+import {
+  Flex,
+  Button,
+  Text,
+  Input,
+  Thead,
+  Tbody,
+  Tr,
+  Textarea,
+  FormControl,
+  FormLabel,
+  useToast,
+} from "@chakra-ui/react";
+import { ArrowBackIcon, CheckIcon } from "@chakra-ui/icons";
+import { CTable, CTh, CTd } from "../components/Table";
+import { useForm } from "react-hook-form";
+import { useAuth } from "../lib/auth";
+import { createPoll } from "../lib/db";
+import Router from "next/router";
 
 export default function addPoll() {
+  const auth = useAuth();
+  const toast = useToast();
+  const [participants, setParticipants] = useState([]);
+  const {
+    register: registerPoll,
+    handleSubmit: handlePollSubmit,
+    errors: pollErrors,
+  } = useForm();
+  const {
+    register: registerParticipant,
+    handleSubmit: handleParticipantSubmit,
+    errors: ParticipantErrors,
+    reset,
+  } = useForm();
+
+  const onSubmitPoll = ({ pollName }) => {
+    createPoll(auth.user.uid, {
+      pollName,
+      participants,
+    });
+    toast({
+      title: "Success!",
+      description: "We've successfully created a new poll for you.",
+      status: "success",
+      duration: 9000,
+      isClosable: true,
+    });
+    Router.push("/");
+  };
+  const onSubmitParticipant = (values) => {
+    setParticipants((part) => [...part, values]);
+    reset();
+  };
+
   return (
-    <Container>
-      <div className="flex flex-col">
-        <header className="flex justify-between">
-          <h3 className="text-3xl font-bold">Add a new Poll</h3>
-          <Link href="">
-            <button className="px-4 py-2 bg-gray-900 text-white rounded-md font-semibold">
-              Create Poll 📊
-            </button>
+    <ContainerLayout>
+      <Flex flexDir="column" width="100%">
+        <Flex justifyContent="space-between">
+          <Link href="/">
+            <Flex alignItems="center" cursor="pointer">
+              <ArrowBackIcon
+                marginRight="0.6em"
+                boxSize={5}
+                marginTop="0.2em"
+              />
+              <Text fontSize="1.2em" fontWeight="semibold">
+                Go back to Polls
+              </Text>
+            </Flex>
           </Link>
-        </header>
-        <div className="bg-gray-100 dark:bg-gray-600 px-3 py-3 flex flex-col rounded-md my-6">
-          <div></div>
-          <div className="space-x-4 flex flex-row w-full">
-            <div className="flex h-20 w-20 bg-red-500 rounded-lg" />
-            <div className="flex-1">
-              <input className="w-full h-10 text-xl px-2 rounded-md border-2 border-black"></input>
-            </div>
-          </div>
-          <div className="mt-2 flex justify-between items-center">
-            <p className="text-lg font-semibold">
-              Participants{" "}
-              <span className="px-3 py-1 ml-2 bg-green-400 rounded-md">0</span>
-            </p>
-            <button className="px-4 py-2 bg-red-500 text-white rounded-md font-semibold">
-              Add Participant
-            </button>
-          </div>
-          <table className="mt-4 gap-4">
-            <thead className="bg-gray-400 text-white">
-              <th className="rounded-tl-md py-2">Avatar</th>
-              <th className="rounded-tr-md py-2">Name</th>
-            </thead>
-            <tbody className="border-2 border-t-0 rounded-bl-md rounded-br-md">
-              <tr className="text-center my-2 border-b-2">
-                <td className="flex justify-center py-2">
-                  <div className="h-10 w-10 bg-red-500 rounded-lg" />
-                </td>
-                <td className="py-2">Sudhanshu Bhagwat</td>
-              </tr>
-              <tr className="text-center my-2">
-                <td className="flex justify-center py-2">
-                  <div className="h-10 w-10 bg-red-500 rounded-lg" />
-                </td>
-                <td className="py-2">Sudhanshu Bhagwat</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </Container>
+          <Button
+            rightIcon={<CheckIcon />}
+            onClick={handlePollSubmit(onSubmitPoll)}
+            colorScheme="teal"
+            variant="outline"
+            fontSize="1.2em"
+          >
+            Create Poll
+          </Button>
+        </Flex>
+        <Flex
+          flexDir="column"
+          padding={3}
+          borderRadius="0.5em"
+          marginTop="1em"
+          width="100%"
+          background="gray.100"
+          padding="1em"
+        >
+          <Flex flexDir="column">
+            <FormControl isRequired>
+              <FormLabel>Poll Name</FormLabel>
+              <Input
+                ref={registerPoll}
+                name="pollName"
+                variant="outline"
+                background="white"
+                placeholder="A name for the poll (Naruto VS Sasuke)"
+              />
+            </FormControl>
+          </Flex>
+          <Flex flexDir="column">
+            <form onSubmit={handleParticipantSubmit(onSubmitParticipant)}>
+              <FormControl>
+                <FormLabel marginBottom="0.4em" marginTop="0.4em">
+                  Participants
+                </FormLabel>
+                <Flex>
+                  <Input
+                    ref={registerParticipant}
+                    name="name"
+                    variant="outline"
+                    background="white"
+                    width="100%"
+                    placeholder="Name a participant (Naruto)"
+                  />
+                  <Button
+                    type="submit"
+                    colorScheme="teal"
+                    variant="outline"
+                    fontSize="1.2em"
+                    paddingX="1em"
+                    marginLeft="1em"
+                  >
+                    Add
+                  </Button>
+                </Flex>
+                <Textarea
+                  ref={registerParticipant}
+                  name="description"
+                  placeholder="A simple description for the participant"
+                  background="white"
+                  marginTop="1em"
+                />
+              </FormControl>
+            </form>
+            <CTable marginTop="1em">
+              <Thead>
+                <Tr>
+                  <CTh>Name</CTh>
+                  <CTh>Description</CTh>
+                </Tr>
+              </Thead>
+              <Tbody>
+                {participants.map((part) => {
+                  return (
+                    <Tr key={part.name}>
+                      <CTd>{part.name}</CTd>
+                      <CTd>{part.description}</CTd>
+                    </Tr>
+                  );
+                })}
+              </Tbody>
+            </CTable>
+          </Flex>
+        </Flex>
+      </Flex>
+    </ContainerLayout>
   );
 }

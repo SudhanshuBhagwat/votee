@@ -1,25 +1,70 @@
-import Container from "../components/Container";
+import ContainerLayout from "../components/ContainerLayout";
+import { Flex, Button, Text, Box } from "@chakra-ui/react";
 
 export default function signin() {
   return (
-    <Container>
-      <div className="h-full flex flex-col items-center mt-20">
-        <h1 className="text-5xl font-bold w-4/6 text-center">
+    <ContainerLayout>
+      <Flex
+        height="full"
+        flexDir="column"
+        alignItems="center"
+        background="red"
+        marginTop="12em"
+      >
+        <Text
+          fontSize="3em"
+          lineHeight="1"
+          fontWeight="bold"
+          textAlign="center"
+          width="66%"
+        >
           Join Votee for creating collaborative polls.
-        </h1>
-        <div className="flex flex-col justify-center items-center mt-10 space-y-4 w-full">
-          <button className="px-2 py-3 bg-gray-900 w-80 text-white cursor-pointer rounded-md font-medium transition hover:bg-gray-600">
+        </Text>
+        <Flex
+          height="full"
+          flexDir="column"
+          justifyItems="center"
+          alignItems="center"
+          width="100%"
+          marginTop="1em"
+        >
+          <Button
+            width="20em"
+            variant="solid"
+            background="gray.900"
+            color="white"
+            fontWeight="medium"
+            marginY="1em"
+            paddingY="1.6em"
+            onClick={(e) => auth.signInWithGithub()}
+          >
             Sign In With Github
-          </button>
-          <button className="px-2 py-3 bg-blue-500 w-80 text-white cursor-pointer rounded-md font-medium transition hover:bg-blue-400">
+          </Button>
+          <Button
+            width="20em"
+            background="blue.500"
+            color="white"
+            fontWeight="medium"
+            marginBottom="1em"
+            paddingY="1.6em"
+          >
             Sign In With Google
-          </button>
-          <p className="text-lg">
-            Already have an account?{" "}
-            <span className="text-blue-400 cursor-pointer">Log In</span>
-          </p>
-        </div>
-      </div>
-    </Container>
+          </Button>
+          <Flex flexDir="row" alignItems="center">
+            <Text fontSize="1.1em" textAlign="center">
+              Already have an account?
+            </Text>
+            <Text
+              marginLeft="0.4em"
+              fontSize="1.1em"
+              cursor="pointer"
+              color="blue.400"
+            >
+              Log In
+            </Text>
+          </Flex>
+        </Flex>
+      </Flex>
+    </ContainerLayout>
   );
 }

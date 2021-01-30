@@ -1,17 +1,19 @@
-import { useTheme } from "next-themes";
+import { useColorMode, Button } from "@chakra-ui/react";
+import { SunIcon, MoonIcon } from "@chakra-ui/icons";
 
 const ThemeManager = () => {
-  const { theme, setTheme } = useTheme();
+  const { colorMode, toggleColorMode } = useColorMode();
 
   return (
-    <div>
-      <button
-        className="text-2xl focus:outline-none"
-        onClick={() => setTheme(theme === "light" ? "dark" : "light")}
-      >
-        {theme === "light" ? "🌞" : "🌛"}
-      </button>
-    </div>
+    <header>
+      <Button onClick={toggleColorMode}>
+        {colorMode === "light" ? (
+          <MoonIcon boxSize={5} />
+        ) : (
+          <SunIcon boxSize={5} />
+        )}
+      </Button>
+    </header>
   );
 };
 
