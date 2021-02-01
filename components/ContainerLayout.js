@@ -1,7 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import ThemeManager from "./ThemeManager";
-import { Box, Button, Flex, Text } from "@chakra-ui/react";
+import { Box, Button, Flex, Spacer, Text } from "@chakra-ui/react";
 import { useAuth } from "../lib/auth";
 
 const ContainerLayout = ({ children }) => {
@@ -60,7 +60,7 @@ const ContainerLayout = ({ children }) => {
           )}
         </Flex>
       </Flex>
-      <Flex flex="1" marginTop="2em" justifyContent="center">
+      <Flex flex="1" paddingY="1em" justifyContent="center">
         {children}
       </Flex>
       <Flex justifyContent="center" flexDir="row">
