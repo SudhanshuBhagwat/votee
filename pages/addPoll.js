@@ -6,20 +6,18 @@ import {
   Button,
   Text,
   Input,
-  Thead,
-  Tbody,
-  Tr,
   Textarea,
   FormControl,
   FormLabel,
   useToast,
 } from "@chakra-ui/react";
 import { ArrowBackIcon, CheckIcon } from "@chakra-ui/icons";
-import { CTable, CTh, CTd } from "../components/Table";
+import { Table, Th, Td, Tr } from "../components/Table";
 import { useForm } from "react-hook-form";
 import { useAuth } from "../lib/auth";
 import { createPoll } from "../lib/db";
 import Router from "next/router";
+import { mutate } from "swr";
 
 export default function addPoll() {
   const auth = useAuth();
@@ -38,18 +36,29 @@ export default function addPoll() {
   } = useForm();
 
   const onSubmitPoll = ({ pollName }) => {
-    createPoll(auth.user.uid, {
+    const newPoll = {
+      uid: auth.user.uid,
       pollName,
+      status: "INACTIVE",
+      createdAt: new Date().toISOString(),
       participants,
-    });
+    };
+    createPoll(newPoll);
     toast({
       title: "Success!",
       description: "We've successfully created a new poll for you.",
       status: "success",
-      duration: 9000,
+      duration: 6000,
       isClosable: true,
     });
-    Router.push("/");
+    mutate(
+      "/api/polls",
+      async (data) => {
+        return { polls: [...data.polls, newPoll] };
+      },
+      false
+    );
+    Router.push("/dashboard");
   };
   const onSubmitParticipant = (values) => {
     setParticipants((part) => [...part, values]);
@@ -60,7 +69,7 @@ export default function addPoll() {
     <ContainerLayout>
       <Flex flexDir="column" width="100%">
         <Flex justifyContent="space-between">
-          <Link href="/">
+          <Link href="/dashboard">
             <Flex alignItems="center" cursor="pointer">
               <ArrowBackIcon
                 marginRight="0.6em"
@@ -138,24 +147,24 @@ export default function addPoll() {
                 />
               </FormControl>
             </form>
-            <CTable marginTop="1em">
-              <Thead>
+            <Table marginTop="1em">
+              <thead>
                 <Tr>
-                  <CTh>Name</CTh>
-                  <CTh>Description</CTh>
+                  <Th>Name</Th>
+                  <Th>Description</Th>
                 </Tr>
-              </Thead>
-              <Tbody>
+              </thead>
+              <tbody>
                 {participants.map((part) => {
                   return (
                     <Tr key={part.name}>
-                      <CTd>{part.name}</CTd>
-                      <CTd>{part.description}</CTd>
+                      <Td>{part.name}</Td>
+                      <Td>{part.description}</Td>
                     </Tr>
                   );
                 })}
-              </Tbody>
-            </CTable>
+              </tbody>
+            </Table>
           </Flex>
         </Flex>
       </Flex>

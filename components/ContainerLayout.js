@@ -1,15 +1,16 @@
 import React from "react";
-import Link from "next/link";
+import NextLink from "next/link";
 import ThemeManager from "./ThemeManager";
-import { Box, Button, Flex, Spacer, Text } from "@chakra-ui/react";
+import { Box, Button, Flex, Link, Spacer, Text } from "@chakra-ui/react";
 import { useAuth } from "../lib/auth";
+import { ExternalLinkIcon } from "@chakra-ui/icons";
 
 const ContainerLayout = ({ children }) => {
   const auth = useAuth();
   return (
     <Flex flexDir="column" h="100%" maxW="60em" margin="auto" paddingX="1em">
       <Flex justify="space-between">
-        <Link href="/">
+        <NextLink href="/">
           <Text
             fontSize="2.4em"
             fontWeight="bold"
@@ -19,12 +20,12 @@ const ContainerLayout = ({ children }) => {
           >
             Votee 🎉
           </Text>
-        </Link>
+        </NextLink>
         <Flex alignItems={"center"}>
           <ThemeManager />
           {!auth?.user ? (
             <div>
-              <Link href="/login">
+              <NextLink href="/login">
                 <Button
                   marginLeft="0.8em"
                   marginRight="0.6em"
@@ -34,12 +35,12 @@ const ContainerLayout = ({ children }) => {
                 >
                   Log In
                 </Button>
-              </Link>
-              <Link href="/signin">
+              </NextLink>
+              <NextLink href="/signin">
                 <Button variant="outline" borderWidth={2} colorScheme="blue">
                   Sign In
                 </Button>
-              </Link>
+              </NextLink>
             </div>
           ) : (
             <Button
@@ -60,21 +61,19 @@ const ContainerLayout = ({ children }) => {
           )}
         </Flex>
       </Flex>
-      <Flex flex="1" paddingY="1em" justifyContent="center">
+      <Flex flex="1" paddingY="1em" justifyContent="center" width="100%">
         {children}
       </Flex>
       <Flex justifyContent="center" flexDir="row">
         Made with 💓 by
-        <Link href="https://www.github.com/SudhanshuBhagwat">
-          <Text
-            marginLeft="0.3em"
-            target="_blank"
-            color="blue.400"
-            fontStyle="italic"
-            cursor="pointer"
-          >
-            Sudhanshu Bhagwat
-          </Text>
+        <Link
+          color="blue.500"
+          marginLeft="0.2em"
+          fontStyle="italic"
+          href="https://www.github.com/SudhanshuBhagwat"
+          isExternal
+        >
+          Sudhanshu Bhagwat <ExternalLinkIcon mx="2px" />
         </Link>
       </Flex>
     </Flex>

@@ -1,4 +1,3 @@
-import "../styles/index.css";
 import { AuthProvider } from "../lib/auth";
 import { ThemeProvider } from "next-themes";
 import "../styles/index.css";

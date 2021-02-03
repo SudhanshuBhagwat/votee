@@ -1,10 +1,11 @@
 import React from "react";
-import { Th, Td, Tr, Table } from "@chakra-ui/react";
+import { Box, Text } from "@chakra-ui/react";
 
-export const CTh = (props) => (
-  <Th
+export const Th = (props) => (
+  <Text
+    as="th"
     textTransform="uppercase"
-    fontSize="md"
+    fontSize="xs"
     color="gray.500"
     fontWeight="medium"
     px={4}
@@ -12,21 +13,38 @@ export const CTh = (props) => (
   />
 );
 
-export const CTd = (props) => (
-  <Td
+export const Td = (props) => (
+  <Box
+    as="td"
     color="gray.900"
     p={4}
-    borderBottom={props.islast ? "" : "1px solid"}
+    borderBottom="1px solid"
     borderBottomColor="gray.100"
     {...props}
   />
 );
 
-export const CTable = (props) => {
+export const Tr = (props) => (
+  <Box
+    as="tr"
+    backgroundColor="gray.50"
+    borderTopLeftRadius={8}
+    borderTopRightRadius={8}
+    borderBottom="1px solid"
+    borderBottomColor="gray.200"
+    height="40px"
+    {...props}
+  />
+);
+
+export const Table = (props) => {
   return (
-    <Table
+    <Box
+      as="table"
       textAlign="left"
       backgroundColor="white"
+      ml={0}
+      mr={0}
       borderRadius={8}
       boxShadow="0px 4px 10px rgba(0, 0, 0, 0.05)"
       {...props}
