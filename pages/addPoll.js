@@ -36,6 +36,16 @@ export default function addPoll() {
   } = useForm();
 
   const onSubmitPoll = async ({ pollName }) => {
+    if (participants.length < 2) {
+      toast({
+        title: "Insufficient participants",
+        description: "Please add more participants to the poll",
+        status: "error",
+        duration: 6000,
+        isClosable: true,
+      });
+      return;
+    }
     const newPoll = {
       uid: auth.user.uid,
       pollName,
@@ -98,7 +108,6 @@ export default function addPoll() {
             onClick={handlePollSubmit(onSubmitPoll)}
             colorScheme="teal"
             variant="outline"
-            fontSize="1.2em"
           >
             Create Poll
           </Button>
@@ -116,7 +125,9 @@ export default function addPoll() {
             <FormControl isRequired>
               <FormLabel>Poll Name</FormLabel>
               <Input
-                ref={registerPoll}
+                ref={registerPoll({
+                  required: true,
+                })}
                 name="pollName"
                 variant="outline"
                 background="white"
@@ -132,7 +143,9 @@ export default function addPoll() {
                 </FormLabel>
                 <Flex>
                   <Input
-                    ref={registerParticipant}
+                    ref={registerParticipant({
+                      required: true,
+                    })}
                     name="name"
                     variant="outline"
                     background="white"
@@ -151,7 +164,9 @@ export default function addPoll() {
                   </Button>
                 </Flex>
                 <Textarea
-                  ref={registerParticipant}
+                  ref={registerParticipant({
+                    required: true,
+                  })}
                   name="description"
                   placeholder="A simple description for the participant"
                   background="white"
@@ -159,24 +174,26 @@ export default function addPoll() {
                 />
               </FormControl>
             </form>
-            <Table marginTop="1em">
-              <thead>
-                <Tr>
-                  <Th>Name</Th>
-                  <Th>Description</Th>
-                </Tr>
-              </thead>
-              <tbody>
-                {participants.map((part) => {
-                  return (
-                    <Tr key={part.name}>
-                      <Td>{part.name}</Td>
-                      <Td>{part.description}</Td>
-                    </Tr>
-                  );
-                })}
-              </tbody>
-            </Table>
+            {participants.length > 0 && (
+              <Table marginTop="1em">
+                <thead>
+                  <Tr>
+                    <Th>Name</Th>
+                    <Th>Description</Th>
+                  </Tr>
+                </thead>
+                <tbody>
+                  {participants.map((part) => {
+                    return (
+                      <Tr key={part.name}>
+                        <Td>{part.name}</Td>
+                        <Td>{part.description}</Td>
+                      </Tr>
+                    );
+                  })}
+                </tbody>
+              </Table>
+            )}
           </Flex>
         </Flex>
       </Flex>

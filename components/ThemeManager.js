@@ -8,9 +8,9 @@ const ThemeManager = () => {
     <header>
       <Button onClick={toggleColorMode}>
         {colorMode === "light" ? (
-          <MoonIcon boxSize={5} />
+          <MoonIcon boxSize={4} />
         ) : (
-          <SunIcon boxSize={5} />
+          <SunIcon boxSize={4} />
         )}
       </Button>
     </header>

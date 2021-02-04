@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Flex, Text, Button } from "@chakra-ui/react";
+import { AddIcon } from "@chakra-ui/icons";
 
 const DashboardLayout = ({ children }) => {
   return (
@@ -9,7 +10,9 @@ const DashboardLayout = ({ children }) => {
           My Polls
         </Text>
         <Link href="/addPoll">
-          <Button variant="outline">+ Add Poll</Button>
+          <Button variant="outline">
+            <AddIcon boxSize={3} marginRight="0.4em" /> Add Poll
+          </Button>
         </Link>
       </Flex>
       {children}

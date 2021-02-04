@@ -10,7 +10,6 @@ const EmptyPoll = () => {
       padding={3}
       borderRadius="0.5em"
       height="40%"
-      marginTop="1em"
       background="gray.100"
     >
       <Text fontSize="1.5em">Create Realtime Polls for your needs</Text>
