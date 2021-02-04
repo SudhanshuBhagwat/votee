@@ -35,7 +35,7 @@ export default function addPoll() {
     reset,
   } = useForm();
 
-  const onSubmitPoll = ({ pollName }) => {
+  const onSubmitPoll = async ({ pollName }) => {
     const newPoll = {
       uid: auth.user.uid,
       pollName,
@@ -43,7 +43,7 @@ export default function addPoll() {
       createdAt: new Date().toISOString(),
       participants,
     };
-    createPoll(newPoll);
+    const id = await createPoll(newPoll);
     toast({
       title: "Success!",
       description: "We've successfully created a new poll for you.",
@@ -54,7 +54,19 @@ export default function addPoll() {
     mutate(
       "/api/polls",
       async (data) => {
-        return { polls: [...data.polls, newPoll] };
+        return {
+          polls: [
+            ...data.polls,
+            {
+              authorId: newPoll.uid,
+              pollName: newPoll.pollName,
+              status: newPoll.status,
+              createdAt: newPoll.createdAt,
+              participantIds: newPoll.participants,
+              id,
+            },
+          ],
+        };
       },
       false
     );
