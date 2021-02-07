@@ -30,7 +30,9 @@ export default function Home() {
       justifyContent="center"
     >
       <Spinner size="xl" />
-      <Text marginTop="1em">Loading...</Text>
+      <Text marginTop="1em">
+        Please wait while your dashboard is being loaded...
+      </Text>
     </Flex>
   );
 }

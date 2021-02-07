@@ -1,9 +1,27 @@
 import { format, parseISO } from "date-fns";
 import { Table, Th, Tr, Td } from "./Table";
-import { Link } from "@chakra-ui/react";
+import { SettingsIcon, DeleteIcon } from "@chakra-ui/icons";
+import { Link, Tooltip } from "@chakra-ui/react";
 import NextLink from "next/link";
+import { deletePoll } from "../lib/db";
+import { mutate } from "swr";
 
 const PollTable = ({ polls }) => {
+  async function handleDelete(id) {
+    await deletePoll(id);
+    mutate(
+      "/api/polls",
+      async (data) => {
+        return {
+          polls: data.polls.filter((poll) => {
+            poll.id !== id;
+          }),
+        };
+      },
+      false
+    );
+  }
+
   return (
     <Table width="full">
       <thead>
@@ -12,7 +30,7 @@ const PollTable = ({ polls }) => {
           <Th>Poll Link</Th>
           <Th>Status</Th>
           <Th>Date Added</Th>
-          <Th>{""}</Th>
+          <Th>Actions</Th>
         </Tr>
       </thead>
       <tbody>
@@ -33,7 +51,23 @@ const PollTable = ({ polls }) => {
                 </NextLink>
               </Td>
               <Td>{format(parseISO(poll.createdAt), "PPpp")}</Td>
-              <Td></Td>
+              <Td>
+                <Tooltip label="Edit Poll" fontSize="md">
+                  <NextLink
+                    href={{
+                      pathname: "/editPoll",
+                      query: {
+                        pollId: poll.id,
+                      },
+                    }}
+                  >
+                    <SettingsIcon marginRight="0.8em" />
+                  </NextLink>
+                </Tooltip>
+                <Tooltip label="Delete Poll" fontSize="md">
+                  <DeleteIcon onClick={() => handleDelete(poll.id)} />
+                </Tooltip>
+              </Td>
             </Tr>
           );
         })}
