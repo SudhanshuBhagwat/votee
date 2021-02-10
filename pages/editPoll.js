@@ -15,12 +15,11 @@ import { ArrowBackIcon, CheckIcon } from "@chakra-ui/icons";
 import { Table, Th, Td, Tr } from "../components/Table";
 import { useForm } from "react-hook-form";
 import { useAuth } from "../lib/auth";
-import { createPoll, getData, updatePoll } from "../lib/db";
+import { getData, updatePoll } from "../lib/db";
 import Router, { useRouter } from "next/router";
 import { mutate } from "swr";
-import { convertPathToQuery } from "../utils/functions";
 
-export default function editPoll() {
+export default function editPoll({ poll }) {
   const auth = useAuth();
   const toast = useToast();
   const router = useRouter();
@@ -40,63 +39,45 @@ export default function editPoll() {
   } = useForm();
 
   useEffect(async () => {
-    let poll = Router.query.pollId;
-    if (poll === undefined) {
-      poll = convertPathToQuery(router.asPath).pollId;
-    }
-    const pollData = await getData(poll);
-    setData(pollData);
-    setParticipants((participants) => [...pollData.participants]);
-    setValue("pollName", pollData.pollName);
+    setData(poll);
+    setParticipants((participants) => [...poll.participants]);
+    setValue("pollName", poll.pollName);
   }, []);
 
   const onSubmitPoll = async ({ pollName }) => {
     if (data.pollName !== pollName) {
-      updatePoll(data.pollId, pollName);
+      await updatePoll(data.pollId, pollName);
+      mutate(
+        "/api/polls",
+        async (pollData) => {
+          return {
+            polls: pollData.polls.map((poll) => {
+              if (poll.id === data.pollId) {
+                console.log({
+                  ...poll,
+                  pollName: pollName,
+                });
+                return {
+                  ...poll,
+                  pollName: pollName,
+                };
+              } else {
+                return poll;
+              }
+            }),
+          };
+        },
+        false
+      );
+      toast({
+        title: "Updated!",
+        description: "We've successfully updated the poll for you.",
+        status: "success",
+        duration: 6000,
+        isClosable: true,
+      });
+      Router.push("/dashboard");
     }
-    // if (participants.length < 2) {
-    //   toast({
-    //     title: "Insufficient participants",
-    //     description: "Please add more participants to the poll",
-    //     status: "error",
-    //     duration: 6000,
-    //     isClosable: true,
-    //   });
-    //   return;
-    // }
-    // const newPoll = {
-    //   uid: auth.user.uid,
-    //   pollName,
-    //   status: "INACTIVE",
-    //   createdAt: new Date().toISOString(),
-    //   participants,
-    // };
-    // const id = await createPoll(newPoll);
-    // toast({
-    //   title: "Success!",
-    //   description: "We've successfully created a new poll for you.",
-    //   status: "success",
-    //   duration: 6000,
-    //   isClosable: true,
-    // });
-    mutate(
-      "/api/polls",
-      async (pollData) => {
-        return {
-          polls: pollData.polls.map((poll) => {
-            if (poll.id === data.pollId) {
-              return {
-                ...poll,
-                pollName: pollName,
-              };
-            }
-            return poll;
-          }),
-        };
-      },
-      false
-    );
-    Router.push("/dashboard");
   };
 
   const onSubmitParticipant = (values) => {
@@ -216,4 +197,15 @@ export default function editPoll() {
       </Flex>
     </ContainerLayout>
   );
+}
+
+export async function getServerSideProps(context) {
+  let poll = context.query.pollId;
+  const pollData = await getData(poll);
+
+  return {
+    props: {
+      poll: pollData,
+    },
+  };
 }
